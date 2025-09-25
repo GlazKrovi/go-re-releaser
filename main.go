@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 )
 
 func main() {
@@ -32,4 +33,14 @@ func main() {
 	}
 
 	fmt.Printf("Release type chosen: %s\n", releaseType)
+
+	// Verify that goreleaser is installed
+	cmd := exec.Command("goreleaser", "--version")
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Printf("Error executing goreleaser: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("GoReleaser version: %s", string(output))
 }
