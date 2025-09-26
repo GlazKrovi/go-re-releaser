@@ -29,7 +29,7 @@ git clone <repository-url>
 cd go-re-releaser
 
 # 🔨 Build the binary
-go build -o gorr .
+go build -o gorr ./cmd/gorr
 
 # ✅ Test the build
 ./gorr --version
@@ -74,7 +74,7 @@ git checkout -b feature/your-feature-name
 
 ```bash
 # 🔨 Build and test
-go build -o gorr .
+go build -o gorr ./cmd/gorr
 ./gorr release patch --snapshot
 
 # 🧪 Run any additional tests
