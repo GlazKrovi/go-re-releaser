@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func main() {
@@ -36,11 +37,21 @@ func main() {
 
 	// Verify that goreleaser is installed
 	cmd := exec.Command("goreleaser", "--version")
-	output, err := cmd.Output()
+	_, err := cmd.Output()
 	if err != nil {
 		fmt.Printf("Error executing goreleaser: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("GoReleaser version: %s", string(output))
+	currentVersion, _ := getCurrentVersion()
+	fmt.Printf("Current version: %s\n", currentVersion)
+}
+
+func getCurrentVersion() (string, error) {
+	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to get last tag: %v", err)
+	}
+	return strings.TrimSpace(string(output)), nil
 }
