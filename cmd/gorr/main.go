@@ -142,7 +142,10 @@ func isValidVersionTag(tag string) bool {
 }
 
 func getNextVersion(currentVersion string, releaseType string) string {
-	parts := strings.Split(currentVersion, ".")
+	// Remove 'v' prefix before parsing
+	version := strings.TrimPrefix(currentVersion, "v")
+	parts := strings.Split(version, ".")
+
 	major, _ := strconv.Atoi(parts[0])
 	minor, _ := strconv.Atoi(parts[1])
 	patch, _ := strconv.Atoi(parts[2])
