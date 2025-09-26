@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -13,8 +14,9 @@ import (
 func main() {
 
 	if len(os.Args) < 3 {
-		fmt.Println("Usage: gorr release <patch|minor|major>")
-		fmt.Println("Example: gorr release patch")
+		fmt.Println("Usage: gorr release <patch|minor|major> [args...]")
+		fmt.Println("Example to officially release on remote repository: gorr release patch")
+		fmt.Println("Example to create locally: gorr release patch --snapshot")
 		os.Exit(1)
 	}
 
@@ -24,6 +26,12 @@ func main() {
 	}
 
 	releaseType := os.Args[2]
+
+	// Capture additional arguments for goreleaser
+	var goreleaserArgs []string
+	if len(os.Args) > 3 {
+		goreleaserArgs = os.Args[3:]
+	}
 
 	validTypes := map[string]bool{
 		"patch": true,
@@ -64,12 +72,17 @@ func main() {
 	// Get next version according to the release type
 	nextVersion := getNextVersion(currentVersion, releaseType)
 
-	// Tag and push the new version
-	tagAndPush(nextVersion)
-	fmt.Printf("Next version pushed: %s\n", nextVersion)
+	isSnapshot := contains(goreleaserArgs, "--snapshot")
+	if isSnapshot {
+		fmt.Printf("Next version that would be pushed: %s\n", nextVersion)
+	} else {
+		// Tag and push the new version
+		tagAndPush(nextVersion)
+		fmt.Printf("Next version pushed: %s\n", nextVersion)
+	}
 
 	// If everything is ok, create and send the complete release
-	err = callReleaser()
+	err = callReleaser(goreleaserArgs)
 	if err != nil {
 		fmt.Printf("❌ Release failed: %v\n", err)
 		os.Exit(1)
@@ -138,8 +151,14 @@ func checkGitStatus() error {
 	return nil
 }
 
-func callReleaser() error {
-	cmd := exec.Command("goreleaser", "release", "--clean")
+func callReleaser(args []string) error {
+	// Build the command with base arguments
+	cmdArgs := []string{"release", "--clean"}
+
+	// Add user-provided arguments
+	cmdArgs = append(cmdArgs, args...)
+
+	cmd := exec.Command("goreleaser", cmdArgs...)
 
 	// Redirect stdout and stderr to the current process streams
 	cmd.Stdout = os.Stdout
@@ -152,4 +171,9 @@ func callReleaser() error {
 	}
 
 	return nil
+}
+
+// contains checks if a string slice contains a specific string
+func contains(slice []string, item string) bool {
+	return slices.Contains(slice, item)
 }
