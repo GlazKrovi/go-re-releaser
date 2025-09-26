@@ -23,7 +23,7 @@
 
 - 🐹 **Go 1.21+**
 - 📁 **A git repository**
-- 📦 **GoReleaser** installed
+- 📦 **GoReleaser** [installed](https://goreleaser.com/install/) and [configured](https://goreleaser.com/quick-start/)
 
 ## 🛠️ Installation
 
