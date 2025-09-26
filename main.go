@@ -59,7 +59,9 @@ func main() {
 	// Get next version according to the release type
 	nextVersion := getNextVersion(currentVersion, releaseType)
 
-	fmt.Printf("Next version: %s\n", nextVersion)
+	// Tag and push the new version
+	tagAndPush(nextVersion)
+	fmt.Printf("Next version pushed: %s\n", nextVersion)
 }
 
 func getCurrentVersion() (string, error) {
@@ -100,4 +102,12 @@ func getNextVersion(currentVersion string, releaseType string) string {
 	}
 
 	return fmt.Sprintf("v%d.%d.%d", major, minor, patch)
+}
+
+func tagAndPush(version string) {
+	cmd := exec.Command("git", "tag", version)
+	cmd.Output()
+
+	cmd = exec.Command("git", "push", "origin", version)
+	cmd.Output()
 }

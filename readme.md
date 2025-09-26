@@ -1,1 +1,1 @@
-go build -o gorr .
+go build -o gorr . && ./gorr release patch 
