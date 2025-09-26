@@ -117,8 +117,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
-**Made with ❤️ by the GORR team**
-
 [⭐ Star this repo](https://github.com/your-username/go-re-releaser) • [🐛 Report Bug](https://github.com/your-username/go-re-releaser/issues) • [💡 Request Feature](https://github.com/your-username/go-re-releaser/issues)
 
 </div>
