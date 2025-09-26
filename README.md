@@ -36,7 +36,9 @@ go install github.com/GlazKrovi/go-re-releaser/cmd/gorr@latest
 # Or build from source
 git clone https://github.com/GlazKrovi/go-re-releaser.git
 cd go-re-releaser
-go build -o gorr ./cmd/gorr
+goreleaser release --snapshot --clean
+
+# see in dist/
 ```
 
 ## 🎯 Usage
