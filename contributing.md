@@ -2,13 +2,16 @@
 
 > _Thank you for your interest in contributing to GORR! This document provides guidelines for contributing to the project._
 
+<div align="center">
+
 [![Contributors Welcome](https://img.shields.io/badge/Contributors-Welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-blue?style=flat-square)](https://github.com/your-username/go-re-releaser/pulls)
-[![Good First Issues](https://img.shields.io/badge/Good%20First-Issues-orange?style=flat-square)](https://github.com/your-username/go-re-releaser/labels/good%20first%20issue)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-blue?style=flat-square)](https://github.com/GlazKrovi/go-re-releaser/pulls)
+
+</div>
 
 ## 🎯 Quick Start
 
-Want to contribute but don't know where to start? Check out our [Good First Issues](https://github.com/your-username/go-re-releaser/labels/good%20first%20issue) label!
+Want to contribute but don't know where to start? Check out our [Good First Issues](https://github.com/GlazKrovi/go-re-releaser/labels/good%20first%20issue) label!
 
 ## 🛠️ Development Setup
 
@@ -50,7 +53,7 @@ go build -o gorr .
 ```bash
 # 🍴 Fork the repository on GitHub
 # 📥 Clone your fork
-git clone https://github.com/your-username/go-re-releaser.git
+git clone https://github.com/GlazKrovi/go-re-releaser.git
 cd go-re-releaser
 ```
 

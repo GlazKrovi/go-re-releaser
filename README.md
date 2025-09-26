@@ -2,9 +2,13 @@
 
 > *A smart wrapper around GoReleaser that simplifies semantic versioning and release management.*
 
+<div align="center">
+
 [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![GoReleaser](https://img.shields.io/badge/GoReleaser-Compatible-blue?style=flat-square&logo=go)](https://goreleaser.com/)
+
+</div>
 
 ## ✨ Features
 
