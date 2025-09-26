@@ -114,10 +114,6 @@ GORR expects Git tags in semantic versioning format:
 | 📤 **Git Push Failure**    | Stops execution if push fails                 |
 | 📦 **GoReleaser Failure**  | Displays clear error messages                 |
 
-## 📄 License
-
-MIT License - see [LICENSE](./LICENSE) file for details.
-
 ---
 
 <div align="center">
