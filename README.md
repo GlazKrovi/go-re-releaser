@@ -116,7 +116,7 @@ GORR expects Git tags in semantic versioning format:
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](./LICENSE) file for details.
 
 ---
 
