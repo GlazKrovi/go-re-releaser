@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -35,7 +36,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Release type chosen: %s\n", releaseType)
+	gitErr := checkGitStatus()
+	if gitErr != nil {
+		fmt.Println("❌ Please commit or stash your working tree before creating a new version")
+		os.Exit(1)
+	}
 
 	// Verify that goreleaser is installed
 	cmd := exec.Command("goreleaser", "--version")
@@ -110,4 +115,17 @@ func tagAndPush(version string) {
 
 	cmd = exec.Command("git", "push", "origin", version)
 	cmd.Output()
+}
+
+// Check git status before release
+func checkGitStatus() error {
+	cmd := exec.Command("git", "status", "--porcelain")
+	output, err := cmd.Output()
+	if err != nil {
+		return err
+	}
+	if len(output) > 0 {
+		return errors.New("git working tree is dirty")
+	}
+	return nil
 }
