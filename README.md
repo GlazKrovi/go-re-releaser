@@ -1,6 +1,6 @@
 # 🚀 GORR - Go-RE-Releaser
 
-> *A smart wrapper around GoReleaser that simplifies semantic versioning and release management.*
+> *A smart wrapper around [GoReleaser](https://goreleaser.com/) that simplifies semantic versioning and release management.*
 
 <div align="center">
 
