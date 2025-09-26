@@ -67,6 +67,9 @@ func main() {
 	// Tag and push the new version
 	tagAndPush(nextVersion)
 	fmt.Printf("Next version pushed: %s\n", nextVersion)
+
+	// If everything is ok, create and send the complete release
+	callReleaser()
 }
 
 func getCurrentVersion() (string, error) {
@@ -128,4 +131,9 @@ func checkGitStatus() error {
 		return errors.New("git working tree is dirty")
 	}
 	return nil
+}
+
+func callReleaser() {
+	cmd := exec.Command("goreleaser", "release", "--clean")
+	cmd.Output()
 }
