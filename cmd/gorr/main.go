@@ -119,7 +119,16 @@ func getCurrentVersion() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get last tag: %v", err)
 	}
-	return strings.TrimSpace(string(output)), nil
+
+	version := strings.TrimSpace(string(output))
+
+	// Handle snapshot versions like "v1.0.0-7-g73abd8e" -> extract "v1.0.0"
+	if strings.Contains(version, "-") {
+		parts := strings.Split(version, "-")
+		version = parts[0]
+	}
+
+	return version, nil
 }
 
 // Check if the tag follows the vx.x.x format
