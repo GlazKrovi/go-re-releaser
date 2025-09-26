@@ -1,6 +1,6 @@
 # 🚀 GORR - Go-RE-Releaser
 
-> *A smart wrapper around [GoReleaser](https://goreleaser.com/) that simplifies semantic versioning and release management.*
+> _A smart wrapper around [GoReleaser](https://goreleaser.com/) that simplifies semantic versioning and release management._
 
 <div align="center">
 
@@ -15,23 +15,24 @@
 - 🚀 **Smart Release Management**: Automatically handles version bumping (patch, minor, major)
 - 🧪 **Snapshot Mode**: Test releases without creating Git tags
 - 🔄 **Git Integration**: Automatically pushes changes and creates tags
-- 📦 **GoReleaser Compatibility**: Full access to all GoReleaser *free* features
+- 📦 **GoReleaser Compatibility**: Full access to all GoReleaser _free_ features
 - 🛡️ **Safety Checks**: Validates Git status and version format before release
 - 🎯 **Simple Commands**: Intuitive command structure
 
 ## 📋 Requirements
 
 - 🐹 **Go 1.21+**
-- 📁 **A git repository** 
+- 📁 **A git repository**
 - 📦 **GoReleaser** installed
-
 
 ## 🛠️ Installation
 
 ```bash
 # Install from GitHub
 go install github.com/GlazKrovi/go-re-releaser/cmd/gorr@latest
+```
 
+```bash
 # Or build from source
 git clone https://github.com/GlazKrovi/go-re-releaser.git
 cd go-re-releaser
@@ -45,7 +46,7 @@ go build -o gorr ./cmd/gorr
 ```bash
 # Official release (creates Git tag and pushes)
 gorr release patch    # v1.0.0 → v1.0.1
-gorr release minor    # v1.0.0 → v1.1.0  
+gorr release minor    # v1.0.0 → v1.1.0
 gorr release major    # v1.0.0 → v2.0.0
 
 # Test release (no Git tag created)
@@ -57,12 +58,9 @@ gorr release minor --snapshot --skip-publish
 
 ```bash
 # All other commands pass directly to GoReleaser
-
 gorr check    # call goreleaser check
 gorr init     # call goreleaser init
 gorr build    # call goreleaser build
-
-# ...
 ```
 
 ## ⚙️ How It Works
@@ -80,11 +78,12 @@ graph TD
     G --> H[🎉 Release Complete!]
 ```
 
-
-
 ## 💡 Examples
 
 ```bash
+# 📋 Check version
+gorr --version
+
 # 🧪 Test a patch release
 gorr release patch --snapshot
 
@@ -101,19 +100,19 @@ gorr build --snapshot
 GORR expects Git tags in semantic versioning format:
 
 | ✅ Valid | ❌ Invalid |
-|----------|------------|
-| `v1.0.0` | `1.0.0` |
+| -------- | ---------- |
+| `v1.0.0` | `1.0.0`    |
 | `v2.1.3` | `test-tag` |
-| `v0.1.0` | `v1.0` |
+| `v0.1.0` | `v1.0`     |
 
 ## 🚨 Error Handling
 
-| Error Type | What Happens |
-|------------|--------------|
-| 🗂️ **Dirty Git Tree** | Prevents release if uncommitted changes exist |
-| 🏷️ **Invalid Version Tag** | Validates tag format before proceeding |
-| 📤 **Git Push Failure** | Stops execution if push fails |
-| 📦 **GoReleaser Failure** | Displays clear error messages |
+| Error Type                 | What Happens                                  |
+| -------------------------- | --------------------------------------------- |
+| 🗂️ **Dirty Git Tree**      | Prevents release if uncommitted changes exist |
+| 🏷️ **Invalid Version Tag** | Validates tag format before proceeding        |
+| 📤 **Git Push Failure**    | Stops execution if push fails                 |
+| 📦 **GoReleaser Failure**  | Displays clear error messages                 |
 
 ## 📄 License
 
