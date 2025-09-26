@@ -26,8 +26,8 @@ func main() {
 
 	if len(os.Args) < 3 {
 		fmt.Println("Usage: gorr release <patch|minor|major> [args...]")
-		fmt.Println("Example to officially release on remote repository: gorr release patch")
-		fmt.Println("Example to create locally: gorr release patch --snapshot")
+		fmt.Println("  📤 Officially release on remote repository: gorr release patch")
+		fmt.Println("  🧪 Create locally: gorr release patch --snapshot")
 		os.Exit(1)
 	}
 
