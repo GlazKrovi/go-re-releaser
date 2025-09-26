@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
@@ -43,7 +44,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	currentVersion, _ := getCurrentVersion()
+	currentVersion, err := getCurrentVersion()
+	if err != nil {
+		fmt.Printf("Error getting current version: %v\n", err)
+		os.Exit(1)
+	}
+
+	if !isValidVersionTag(currentVersion) {
+		fmt.Printf("Error: Invalid version tag format '%s'. Expected format: vx.x.x (e.g., v1.2.3)\n", currentVersion)
+		os.Exit(1)
+	}
+
 	fmt.Printf("Current version: %s\n", currentVersion)
 }
 
@@ -54,4 +65,15 @@ func getCurrentVersion() (string, error) {
 		return "", fmt.Errorf("failed to get last tag: %v", err)
 	}
 	return strings.TrimSpace(string(output)), nil
+}
+
+// isValidVersionTag checks if the tag follows the vx.x.x format
+func isValidVersionTag(tag string) bool {
+	// Regex pattern for vx.x.x format (e.g., v1.2.3, v0.1.0, v10.20.30)
+	pattern := `^v\d+\.\d+\.\d+$`
+	matched, err := regexp.MatchString(pattern, tag)
+	if err != nil {
+		return false
+	}
+	return matched
 }
