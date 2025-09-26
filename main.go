@@ -69,8 +69,12 @@ func main() {
 	fmt.Printf("Next version pushed: %s\n", nextVersion)
 
 	// If everything is ok, create and send the complete release
-	releaseOutput := callReleaser()
-	fmt.Println(releaseOutput)
+	err = callReleaser()
+	if err != nil {
+		fmt.Printf("❌ Release failed: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Println("✅ Release completed successfully!")
 }
 
 func getCurrentVersion() (string, error) {
@@ -134,8 +138,18 @@ func checkGitStatus() error {
 	return nil
 }
 
-func callReleaser() string {
+func callReleaser() error {
 	cmd := exec.Command("goreleaser", "release", "--clean")
-	output, _ := cmd.Output()
-	return string(output)
+
+	// Redirect stdout and stderr to the current process streams
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	// Run the command and wait for it to complete
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("goreleaser failed: %v", err)
+	}
+
+	return nil
 }
