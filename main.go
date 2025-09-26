@@ -74,8 +74,15 @@ func main() {
 
 	isSnapshot := contains(goreleaserArgs, "--snapshot")
 	if isSnapshot {
+		fmt.Println("Any commits would be pushed to the repo.")
 		fmt.Printf("Next version that would be pushed: %s\n", nextVersion)
 	} else {
+		fmt.Printf("Pushing changes to remote repository...\n")
+		err = gitPushChanges()
+		if err != nil {
+			os.Exit(1)
+		}
+
 		// Tag and push the new version
 		tagAndPush(nextVersion)
 		fmt.Printf("Next version pushed: %s\n", nextVersion)
@@ -128,6 +135,22 @@ func getNextVersion(currentVersion string, releaseType string) string {
 	}
 
 	return fmt.Sprintf("v%d.%d.%d", major, minor, patch)
+}
+
+func gitPushChanges() error {
+	cmd := exec.Command("git", "push")
+
+	// Redirect stdout and stderr to the current process streams
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	// Run the command and wait for it to complete
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("git push failed: %v", err)
+	}
+
+	return nil
 }
 
 func tagAndPush(version string) {
