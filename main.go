@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -44,18 +45,21 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Get the current version
 	currentVersion, err := getCurrentVersion()
 	if err != nil {
 		fmt.Printf("Error getting current version: %v\n", err)
 		os.Exit(1)
 	}
-
 	if !isValidVersionTag(currentVersion) {
 		fmt.Printf("Error: Invalid version tag format '%s'. Expected format: vx.x.x (e.g., v1.2.3)\n", currentVersion)
 		os.Exit(1)
 	}
 
-	fmt.Printf("Current version: %s\n", currentVersion)
+	// Get next version according to the release type
+	nextVersion := getNextVersion(currentVersion, releaseType)
+
+	fmt.Printf("Next version: %s\n", nextVersion)
 }
 
 func getCurrentVersion() (string, error) {
@@ -67,13 +71,33 @@ func getCurrentVersion() (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-// isValidVersionTag checks if the tag follows the vx.x.x format
+// Check if the tag follows the vx.x.x format
 func isValidVersionTag(tag string) bool {
-	// Regex pattern for vx.x.x format (e.g., v1.2.3, v0.1.0, v10.20.30)
 	pattern := `^v\d+\.\d+\.\d+$`
 	matched, err := regexp.MatchString(pattern, tag)
 	if err != nil {
 		return false
 	}
 	return matched
+}
+
+func getNextVersion(currentVersion string, releaseType string) string {
+	parts := strings.Split(currentVersion, ".")
+	major, _ := strconv.Atoi(parts[0])
+	minor, _ := strconv.Atoi(parts[1])
+	patch, _ := strconv.Atoi(parts[2])
+
+	switch releaseType {
+	case "patch":
+		patch++
+	case "minor":
+		minor++
+		patch = 0
+	case "major":
+		major++
+		minor = 0
+		patch = 0
+	}
+
+	return fmt.Sprintf("v%d.%d.%d", major, minor, patch)
 }
