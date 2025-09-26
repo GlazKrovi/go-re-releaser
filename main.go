@@ -21,8 +21,13 @@ func main() {
 	}
 
 	if os.Args[1] != "release" {
-		fmt.Printf("Error: Unknown command '%s'. Use 'gorr release <patch|minor|major>'\n", os.Args[1])
-		os.Exit(1)
+		// Pass all arguments to goreleaser directly
+		err := callGoreleaserDirect(os.Args[1:])
+		if err != nil {
+			fmt.Printf("❌ GoReleaser failed: %v\n", err)
+			os.Exit(1)
+		}
+		return
 	}
 
 	releaseType := os.Args[2]
@@ -199,4 +204,21 @@ func callReleaser(args []string) error {
 // contains checks if a string slice contains a specific string
 func contains(slice []string, item string) bool {
 	return slices.Contains(slice, item)
+}
+
+// callGoreleaserDirect passes all arguments directly to goreleaser
+func callGoreleaserDirect(args []string) error {
+	cmd := exec.Command("goreleaser", args...)
+
+	// Redirect stdout and stderr to the current process streams
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	// Run the command and wait for it to complete
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	return nil
 }
