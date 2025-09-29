@@ -117,10 +117,16 @@ func getCurrentVersion() (string, error) {
 	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0")
 	output, err := cmd.Output()
 	if err != nil {
-		return "", fmt.Errorf("failed to get last tag: %v", err)
+		// If no tags exist, return default version v0.1.0
+		return "v0.1.0", nil
 	}
 
 	version := strings.TrimSpace(string(output))
+
+	// If output is empty, return default version
+	if version == "" {
+		return "v0.1.0", nil
+	}
 
 	// Handle snapshot versions like "v1.0.0-7-g73abd8e" -> extract "v1.0.0"
 	if strings.Contains(version, "-") {
