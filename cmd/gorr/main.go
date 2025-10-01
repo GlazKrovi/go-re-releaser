@@ -24,11 +24,19 @@ func main() {
 		return
 	}
 
-	if len(os.Args) < 3 && os.Args[1] != "release" {
-		fmt.Println("Usage: gorr release <patch|minor|major> [args...]")
-		fmt.Println("  📤 Officially release on remote repository: gorr release patch")
-		fmt.Println("  🧪 Create locally: gorr release patch --snapshot")
-		os.Exit(1)
+	if len(os.Args) < 3 {
+		if len(os.Args) >= 2 && os.Args[1] == "release" {
+			fmt.Println("Usage: gorr release <patch|minor|major> [args...]")
+			fmt.Println("  📤 Officially release on remote repository: gorr release patch")
+			fmt.Println("  🧪 Create locally: gorr release patch --snapshot")
+			os.Exit(1)
+		}
+		if len(os.Args) < 2 {
+			fmt.Println("Usage: gorr release <patch|minor|major> [args...]")
+			fmt.Println("  📤 Officially release on remote repository: gorr release patch")
+			fmt.Println("  🧪 Create locally: gorr release patch --snapshot")
+			os.Exit(1)
+		}
 	}
 
 	if os.Args[1] != "release" {
