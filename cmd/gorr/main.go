@@ -110,7 +110,11 @@ func main() {
 		}
 
 		// Tag and push the new version
-		tagAndPush(nextVersion)
+		err = tagAndPush(nextVersion)
+		if err != nil {
+			fmt.Printf("❌ Failed to tag and push: %v\n", err)
+			os.Exit(1)
+		}
 		fmt.Printf("Next version pushed: %s\n", nextVersion)
 	}
 
@@ -201,12 +205,30 @@ func gitPushChanges() error {
 	return nil
 }
 
-func tagAndPush(version string) {
-	cmd := exec.Command("git", "tag", version)
-	cmd.Output()
+func tagAndPush(version string) error {
+	// Delete the tag locally if it exists
+	delCmd := exec.Command("git", "tag", "-d", version)
+	delCmd.Run() // Ignore error if tag doesn't exist
 
-	cmd = exec.Command("git", "push", "origin", version)
-	cmd.Output()
+	// Create the tag
+	cmd := exec.Command("git", "tag", version)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to create tag %s: %v", version, err)
+	}
+
+	// Push the tag (force push in case it exists on remote)
+	cmd = exec.Command("git", "push", "origin", version, "--force")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to push tag %s: %v", version, err)
+	}
+
+	return nil
 }
 
 // Check git status before release
