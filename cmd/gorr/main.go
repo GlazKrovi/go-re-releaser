@@ -210,8 +210,8 @@ func tagAndPush(version string) error {
 	delCmd := exec.Command("git", "tag", "-d", version)
 	delCmd.Run() // Ignore error if tag doesn't exist
 
-	// Create the tag
-	cmd := exec.Command("git", "tag", version)
+	// Create an annotated tag (required for goreleaser)
+	cmd := exec.Command("git", "tag", "-a", version, "-m", fmt.Sprintf("Release %s", version))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
