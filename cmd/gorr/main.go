@@ -11,28 +11,17 @@ import (
 	"strings"
 )
 
-// Version information
-const (
-	Version = "1.0.1"
-)
-
 func main() {
 
-	// Handle --version flag
-	if len(os.Args) >= 2 && (os.Args[1] == "--version" || os.Args[1] == "-v") {
-		showVersion()
-		return
-	}
-
 	if len(os.Args) < 3 {
-		if len(os.Args) >= 2 && os.Args[1] == "release" {
-			fmt.Println("Usage: gorr release <patch|minor|major> [args...]")
+		if len(os.Args) >= 2 && os.Args[1] == "release" { // release command
+			fmt.Println("Usage: gorr release <local|patch|minor|major> [args...]")
 			fmt.Println("  📤 Officially release on remote repository: gorr release patch")
 			fmt.Println("  🧪 Create locally: gorr release patch --snapshot")
 			os.Exit(1)
 		}
 		if len(os.Args) < 2 {
-			fmt.Println("Usage: gorr release <patch|minor|major> [args...]")
+			fmt.Println("Usage: gorr release <local|patch|minor|major> [args...]")
 			fmt.Println("  📤 Officially release on remote repository: gorr release patch")
 			fmt.Println("  🧪 Create locally: gorr release patch --snapshot")
 			os.Exit(1)
@@ -58,14 +47,27 @@ func main() {
 	}
 
 	validTypes := map[string]bool{
+		"local": true,
 		"patch": true,
 		"minor": true,
 		"major": true,
 	}
 
 	if !validTypes[releaseType] {
-		fmt.Printf("Error: Invalid release type '%s'. Must be one of: patch, minor, major\n", releaseType)
+		fmt.Printf("Error: Invalid release type '%s'. Must be one of: local, patch, minor, major\n", releaseType)
 		os.Exit(1)
+	}
+
+	// Handle local releases (snapshot only)
+	if releaseType == "local" {
+		fmt.Println("🧪 Creating local snapshot release...")
+		err := callReleaser([]string{"--snapshot"})
+		if err != nil {
+			fmt.Printf("❌ Local release failed: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println("✅ Local release completed successfully!")
+		return
 	}
 
 	gitErr := checkGitStatus()
@@ -258,9 +260,4 @@ func callGoreleaserDirect(args []string) error {
 	}
 
 	return nil
-}
-
-// showVersion displays version information
-func showVersion() {
-	fmt.Printf("GORR - Go-RE-Releaser v%s\n", Version)
 }
