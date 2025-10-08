@@ -14,7 +14,7 @@ import (
 func main() {
 
 	if len(os.Args) < 3 {
-		if len(os.Args) >= 2 && os.Args[1] == "release" { // release command
+		if len(os.Args) >= 2 && os.Args[1] == "release" {
 			fmt.Println("Usage: gorr release <local|patch|minor|major> [args...]")
 			fmt.Println("  📤 Officially release on remote repository: gorr release patch")
 			fmt.Println("  🧪 Create locally: gorr release patch --snapshot")
@@ -29,7 +29,6 @@ func main() {
 	}
 
 	if os.Args[1] != "release" {
-		// Pass all arguments to goreleaser directly
 		err := callGoreleaserDirect(os.Args[1:])
 		if err != nil {
 			fmt.Printf("❌ GoReleaser failed: %v\n", err)
@@ -40,7 +39,6 @@ func main() {
 
 	releaseType := os.Args[2]
 
-	// Capture additional arguments for goreleaser
 	var goreleaserArgs []string
 	if len(os.Args) > 3 {
 		goreleaserArgs = os.Args[3:]
@@ -64,7 +62,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Handle local releases (snapshot only)
 	if releaseType == "local" {
 		fmt.Println("🧪 Creating local snapshot release...")
 		err := callReleaser([]string{"--snapshot"})
@@ -76,7 +73,6 @@ func main() {
 		return
 	}
 
-	// Verify that goreleaser is installed
 	cmd := exec.Command("goreleaser", "--version")
 	_, err := cmd.Output()
 	if err != nil {
@@ -84,7 +80,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Get the current version
 	currentVersion, err := getCurrentVersion()
 	if err != nil {
 		fmt.Printf("Error getting current version: %v\n", err)
@@ -95,7 +90,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Get next version according to the release type
 	nextVersion := getNextVersion(currentVersion, releaseType)
 
 	isSnapshot := contains(goreleaserArgs, "--snapshot")
@@ -109,7 +103,6 @@ func main() {
 			os.Exit(1)
 		}
 
-		// Tag and push the new version
 		err = tagAndPush(nextVersion)
 		if err != nil {
 			fmt.Printf("❌ Failed to tag and push: %v\n", err)
@@ -118,7 +111,6 @@ func main() {
 		fmt.Printf("Next version pushed: %s\n", nextVersion)
 	}
 
-	// If everything is ok, create and send the complete release
 	err = callReleaser(goreleaserArgs)
 	if err != nil {
 		fmt.Printf("❌ Release failed: %v\n", err)
@@ -128,25 +120,22 @@ func main() {
 }
 
 func getCurrentVersion() (string, error) {
-	// Fetch latest tags from remote
 	fetchCmd := exec.Command("git", "fetch", "--tags")
-	fetchCmd.Run() // Ignore errors, tags might already be up to date
+	fetchCmd.Run()
 
 	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0")
 	output, err := cmd.Output()
 	if err != nil {
-		// If no tags exist, return default version v0.1.0
 		return "v0.1.0", nil
 	}
 
 	version := strings.TrimSpace(string(output))
 
-	// If output is empty, return default version
 	if version == "" {
 		return "v0.1.0", nil
 	}
 
-	// Handle snapshot versions like "v1.0.0-7-g73abd8e" -> extract "v1.0.0"
+	// extract base version from snapshot versions (e.g. v1.0.0-7-g73abd8e -> v1.0.0)
 	if strings.Contains(version, "-") {
 		parts := strings.Split(version, "-")
 		version = parts[0]
@@ -155,7 +144,6 @@ func getCurrentVersion() (string, error) {
 	return version, nil
 }
 
-// Check if the tag follows the vx.x.x format
 func isValidVersionTag(tag string) bool {
 	pattern := `^v\d+\.\d+\.\d+$`
 	matched, err := regexp.MatchString(pattern, tag)
@@ -166,7 +154,6 @@ func isValidVersionTag(tag string) bool {
 }
 
 func getNextVersion(currentVersion string, releaseType string) string {
-	// Remove 'v' prefix before parsing
 	version := strings.TrimPrefix(currentVersion, "v")
 	parts := strings.Split(version, ".")
 
@@ -191,12 +178,9 @@ func getNextVersion(currentVersion string, releaseType string) string {
 
 func gitPushChanges() error {
 	cmd := exec.Command("git", "push")
-
-	// Redirect stdout and stderr to the current process streams
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// Run the command and wait for it to complete
 	err := cmd.Run()
 	if err != nil {
 		return fmt.Errorf("git push failed: %v", err)
@@ -206,11 +190,9 @@ func gitPushChanges() error {
 }
 
 func tagAndPush(version string) error {
-	// Delete the tag locally if it exists
 	delCmd := exec.Command("git", "tag", "-d", version)
-	delCmd.Run() // Ignore error if tag doesn't exist
+	delCmd.Run()
 
-	// Create an annotated tag (required for goreleaser)
 	cmd := exec.Command("git", "tag", "-a", version, "-m", fmt.Sprintf("Release %s", version))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -219,7 +201,6 @@ func tagAndPush(version string) error {
 		return fmt.Errorf("failed to create tag %s: %v", version, err)
 	}
 
-	// Push the tag (force push in case it exists on remote)
 	cmd = exec.Command("git", "push", "origin", version, "--force")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -231,7 +212,6 @@ func tagAndPush(version string) error {
 	return nil
 }
 
-// Check git status before release
 func checkGitStatus() error {
 	cmd := exec.Command("git", "status", "--porcelain")
 	output, err := cmd.Output()
@@ -245,19 +225,13 @@ func checkGitStatus() error {
 }
 
 func callReleaser(args []string) error {
-	// Build the command with base arguments
 	cmdArgs := []string{"release", "--clean"}
-
-	// Add user-provided arguments
 	cmdArgs = append(cmdArgs, args...)
 
 	cmd := exec.Command("goreleaser", cmdArgs...)
-
-	// Redirect stdout and stderr to the current process streams
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// Run the command and wait for it to complete
 	err := cmd.Run()
 	if err != nil {
 		return fmt.Errorf("goreleaser failed: %v", err)
@@ -266,20 +240,15 @@ func callReleaser(args []string) error {
 	return nil
 }
 
-// contains checks if a string slice contains a specific string
 func contains(slice []string, item string) bool {
 	return slices.Contains(slice, item)
 }
 
-// callGoreleaserDirect passes all arguments directly to goreleaser
 func callGoreleaserDirect(args []string) error {
 	cmd := exec.Command("goreleaser", args...)
-
-	// Redirect stdout and stderr to the current process streams
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// Run the command and wait for it to complete
 	err := cmd.Run()
 	if err != nil {
 		return fmt.Errorf("%v", err)
