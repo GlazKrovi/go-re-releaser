@@ -58,6 +58,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	gitErr := checkGitStatus()
+	if gitErr != nil {
+		fmt.Println("❌ Please commit or stash your working tree before creating a new version")
+		os.Exit(1)
+	}
+
 	// Handle local releases (snapshot only)
 	if releaseType == "local" {
 		fmt.Println("🧪 Creating local snapshot release...")
@@ -68,12 +74,6 @@ func main() {
 		}
 		fmt.Println("✅ Local release completed successfully!")
 		return
-	}
-
-	gitErr := checkGitStatus()
-	if gitErr != nil {
-		fmt.Println("❌ Please commit or stash your working tree before creating a new version")
-		os.Exit(1)
 	}
 
 	// Verify that goreleaser is installed
