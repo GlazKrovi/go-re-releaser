@@ -124,6 +124,10 @@ func main() {
 }
 
 func getCurrentVersion() (string, error) {
+	// Fetch latest tags from remote
+	fetchCmd := exec.Command("git", "fetch", "--tags")
+	fetchCmd.Run() // Ignore errors, tags might already be up to date
+
 	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0")
 	output, err := cmd.Output()
 	if err != nil {
