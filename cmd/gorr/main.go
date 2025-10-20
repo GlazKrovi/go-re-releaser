@@ -69,7 +69,7 @@ func main() {
 			fmt.Printf("❌ Local release failed: %v\n", err)
 			os.Exit(1)
 		}
-		fmt.Println("✅ Local release completed successfully!")
+		fmt.Println("• ...and go-re-releaser!")
 		return
 	}
 
@@ -116,7 +116,7 @@ func main() {
 		fmt.Printf("❌ Release failed: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Println("✅ Release completed successfully!")
+	fmt.Println("• ...and go-re-releaser!")
 }
 
 func getCurrentVersion() (string, error) {
